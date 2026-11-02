@@ -1,0 +1,8 @@
+README.md
+dsgvoman.py
+pyproject.toml
+dsgvoman.egg-info/PKG-INFO
+dsgvoman.egg-info/SOURCES.txt
+dsgvoman.egg-info/dependency_links.txt
+dsgvoman.egg-info/entry_points.txt
+dsgvoman.egg-info/top_level.txt

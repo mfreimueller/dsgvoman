@@ -1,0 +1,66 @@
+# dsgvoman
+
+Tiny CLI to anonymise student submission folders before handing them off for
+grading or archiving, and to restore the original names afterwards.
+
+Given a folder like:
+
+```
+submissions/
+├── Maxi Mustermann_1231441_assignsubmission_file/
+├── Lea Frei_998123_assignsubmission_file/
+└── ...
+```
+
+`dsgvoman up` renames every immediate subdirectory to a random generic name
+and records the correspondence in `mapping.json`. `dsgvoman down` reverses it.
+
+## Usage
+
+```
+dsgvoman up [--dir PATH]      # obfuscate (creates mapping.json)
+dsgvoman down [--dir PATH]    # restore  (consumes and deletes mapping.json)
+```
+
+`PATH` defaults to the current directory.
+
+- `up` **refuses to run** if a `mapping.json` already exists, so it can never
+  destroy an existing mapping.
+- `down` validates the whole mapping **before** renaming anything (JSON well
+  formed, Base64 decodes, every random folder present, no destination name
+  already taken). On any problem it aborts and keeps `mapping.json`.
+- `mapping.json` is deleted only after every rename succeeded.
+
+### mapping.json format
+
+```json
+[
+  {
+    "original": "TWF4aSBNdXN0ZXJtYW5uXzEyMzE0NDFfYXNzaWduc3VibWlzc2lvbl9maWxl",
+    "replacement": "k3f9a2zb"
+  }
+]
+```
+
+The original (student-name-bearing) folder name is stored Base64-encoded; the
+replacement is a random 8-character lowercase alphanumeric string and carries
+no personal data, so it stays readable.
+
+> **Note:** Base64 is an *encoding*, not encryption. It keeps casual readers
+> from spotting names at a glance, but anyone with the file can decode it in
+> one step. If the mapping must not fall into the wrong hands, keep it out of
+> the shared folder — don't rely on Base64 to protect it.
+
+## Install
+
+No runtime dependencies (Python ≥ 3.9, stdlib only). Either run it directly:
+
+```
+python3 dsgvoman.py up --dir submissions
+```
+
+or install it as a proper `dsgvoman` command:
+
+```
+pip install -e .        # or: uv tool install .
+```
